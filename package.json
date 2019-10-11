@@ -58,7 +58,11 @@
     "vue-electron": "^1.0.6",
     "vue-router": "^2.5.3",
     "vuex": "^2.3.1",
-    "vuex-i18n": "^1.13.1"
+    "vuex-i18n": "^1.13.1",
+    "bitcoinjs-lib": "^4.0.2",
+    "bitcore-lib": "git+https://github.com/IhorSavva/bitcore-lib.git#feature/segwit",
+    "bitcore-lib-cash": "git+https://github.com/IhorSavva/bitcore-lib-cash.git",
+    "bitcore-lib-dash": "git+https://github.com/IhorSavva/bitcore-lib-dash.git"
   },
   "devDependencies": {
     "babel-core": "^6.25.0",
