@@ -10,6 +10,7 @@ import { translationsEn } from './assets/lang/en'
 import { translationsDe } from './assets/lang/de'
 require('./icons/index.css')
 require('./assets/style/vue-material.css')
+require('./assets/style/style.css')
 if (!process.env.IS_WEB) Vue.use(require('vue-electron'))
 Vue.http = Vue.prototype.$http = axios
 Vue.config.productionTip = false

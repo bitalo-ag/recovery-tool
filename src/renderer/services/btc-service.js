@@ -16,7 +16,7 @@ var config = require('../config').config
 bitcore.Networks.defaultNetwork = config.network == 'testnet' ? bitcore.Networks.testnet : bitcore.Networks.livenet;
 var network = config.network == 'testnet' ?  bitcoin.networks.testnet :  bitcoin.networks.bitcoin
 
-module.exports = {
+export default {
   signHex: function (data) {
     var key = bitcoin.ECPair.fromWIF(bitcore.PrivateKey.fromString(data['master_key']).toWIF())
     var tx = bitcoin.TransactionBuilder.fromTransaction(bitcoin.Transaction.fromHex(data['hex']));

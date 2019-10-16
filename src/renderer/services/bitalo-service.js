@@ -11,9 +11,12 @@
 let CryptoJS = require('crypto-js')
 let sha256 = require('crypto-js/sha256')
 
-module.exports = {
+export default {
   encryptMasterKey: function (master_key, password, salt) {
     return CryptoJS.AES.encrypt(master_key, sha256(password + salt).toString()).toString()
   },
-
+  decryptMasterKey: function (encrypted_master_key, password, salt) {
+    let bytes = CryptoJS.AES.decrypt(encrypted_master_key, sha256(password + salt).toString())
+    return bytes.toString(CryptoJS.enc.Utf8)
+  }
 }
