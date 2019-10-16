@@ -24,6 +24,7 @@
 
 <script>
   import service from '../../services/bitalo-service'
+  import serviceDash from '../../services/dash-service'
   import { mapActions } from 'vuex'
   const _ = require('lodash')
 
@@ -73,6 +74,9 @@
             try {
               this.assets = Object.keys(this.form.backup)
               let masterKey = service.decryptMasterKey(this.form.backup.dash.key, this.form.password, this.form.backup.dash.salt)
+              this.form.backup.dash.master_key = masterKey
+              let b = serviceDash.signHex(this.form.backup.dash)
+              console.log(b)
               if (!masterKey) {
 //                this.updateNotification('Wrong password')
                 this.passwordErrorMessage = 'Wrong password'
