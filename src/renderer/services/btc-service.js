@@ -11,10 +11,9 @@
 var bitcore = require('bitcore-lib')
 var bitcoin = require('bitcoinjs-lib')
 
-var config = require('../config').config
 
-bitcore.Networks.defaultNetwork = config.network == 'testnet' ? bitcore.Networks.testnet : bitcore.Networks.livenet;
-var network = config.network == 'testnet' ?  bitcoin.networks.testnet :  bitcoin.networks.bitcoin
+bitcore.Networks.defaultNetwork = bitcore.Networks.livenet
+var network = bitcoin.networks.bitcoin
 
 export default {
   signHex: function (data) {
@@ -25,15 +24,15 @@ export default {
       const p2ms = bitcoin.payments.p2ms({ m: 2, pubkeys, network: network })
       const p2wsh = bitcoin.payments.p2wsh({ redeem: p2ms, network: network })
       const p2sh = bitcoin.payments.p2sh({ redeem: p2wsh, network: network })
-      if (tx.__inputs[0].signatures){
-        Object.assign(tx.__inputs[0], {signType: "multisig", hasWitness:true, value: params.utxo.amount.toSatoshi(), signScript: bitcore.Script.buildMultisigOut(utxo['public_keys'].sort(), 2).toBuffer()})
+      if (tx.__inputs[i].signatures){
+        Object.assign(tx.__inputs[i], {signType: "multisig", hasWitness:true, value: params.utxo.amount.toSatoshi(), signScript: bitcore.Script.buildMultisigOut(utxo['public_keys'].sort(), 2).toBuffer()})
         var signature = tx.__inputs[i].signatures[0]
-        tx.__inputs[0].signatures = [undefined,undefined]
-        utxo['public_keys'].sort().forEach((pkey, i)=> {
+        tx.__inputs[i].signatures = [undefined,undefined]
+        utxo['public_keys'].sort().forEach((pkey, j)=> {
           if(pkey =! data['public_key']){
-            tx.__inputs[0].signatures[i] = signature
+            tx.__inputs[i].signatures[j] = signature
           }else{
-            tx.__inputs[0].signatures[i] = undefined
+            tx.__inputs[i].signatures[j] = undefined
           }
         })
       }
