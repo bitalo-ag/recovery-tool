@@ -6,6 +6,7 @@ import router from './router'
 import store from './store'
 import vuexI18n from 'vuex-i18n/dist/vuex-i18n.cjs'
 import VueMaterial from 'vue-material'
+import Clipboard from 'vue-clipboard2'
 import { translationsEn } from './assets/lang/en'
 import { translationsDe } from './assets/lang/de'
 require('./icons/index.css')
@@ -16,12 +17,16 @@ Vue.http = Vue.prototype.$http = axios
 Vue.config.productionTip = false
 Vue.use(vuexI18n.plugin, store)
 Vue.use(VueMaterial)
+Vue.use(Clipboard)
 
 
 Vue.material.registerTheme('default', {
   primary: 'white',
   accent: 'green',
-  warn: 'red',
+  warn: {
+    color: 'red',
+    hue: 'A200'
+  },
   background: {
     color: 'light-blue',
     hue: 900

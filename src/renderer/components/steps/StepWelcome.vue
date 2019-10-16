@@ -10,7 +10,7 @@
 
 <script>
   export default {
-    name: 'step-welcome'
+    name: 'step-welcome',
   }
 </script>
 

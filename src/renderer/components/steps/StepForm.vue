@@ -1,6 +1,11 @@
 <template>
   <div class="">
-    {{ isValidFields }}
+    <div
+      class="md-title align-center step-title"
+    >
+      Fill in the fields with data from the email.
+    </div>
+
     <md-input-container
       class="input-container"
     >
@@ -29,8 +34,7 @@
   const _ = require('lodash')
 
   const EVENTS = {
-    submit: 'submit',
-    valid: 'valid'
+    change: 'change'
   }
 
   export default {
@@ -38,11 +42,11 @@
     data () {
       return {
         form: {
+          backup: null,
           password: '',
-          backup: ''
         },
         timeoutCheckForm: 1000,
-        passwordErrorMessage: ''
+        passwordErrorMessage: '',
       }
     },
     methods: {
@@ -59,6 +63,27 @@
         reader.onerror = evt => {
           console.error(evt)
         }
+      },
+      createMasterKey () {
+        try {
+          const assets = Object.keys(this.form.backup)
+          assets.forEach(el => {
+            let masterKey = service.decryptMasterKey(this.form.backup[el].key, this.form.password, this.form.backup[el].salt)
+            this.form.backup[el].master_key = masterKey
+            if (!masterKey) {
+              this.passwordErrorMessage = 'Wrong password'
+              throw { message: this.passwordErrorMessage, isDisplay: false }
+            }
+          })
+          this.passwordErrorMessage = ''
+          this.$emit(EVENTS.change, { valid: true, form: this.form })
+        } catch (err) {
+          console.error(err)
+          this.$emit(EVENTS.change, { valid: false, form: this.form })
+          if (!err.hasOwnProperty('isDisplay') && !err.isDisplay) {
+            this.updateNotification('Something went wrong')
+          }
+        }
       }
     },
     computed: {
@@ -71,26 +96,9 @@
         deep: true,
         handler: _.debounce(function () {
           if (this.isValidFields) {
-            try {
-              this.assets = Object.keys(this.form.backup)
-              let masterKey = service.decryptMasterKey(this.form.backup.dash.key, this.form.password, this.form.backup.dash.salt)
-              this.form.backup.dash.master_key = masterKey
-              let b = serviceDash.signHex(this.form.backup.dash)
-              console.log(b)
-              if (!masterKey) {
-//                this.updateNotification('Wrong password')
-                this.passwordErrorMessage = 'Wrong password'
-              } else {
-                this.passwordErrorMessage = ''
-                this.$emit(EVENTS.submit, { masterKey: masterKey })
-                this.$emit(EVENTS.valid, { valid: true, form: this.form })
-              }
-            } catch (err) {
-              console.error(err)
-              this.updateNotification('Something password')
-            }
+            this.createMasterKey()
           } else {
-            this.$emit(EVENTS.valid, { valid: false, form: this.form })
+            this.$emit(EVENTS.change, { valid: false, form: this.form })
           }
         }, this.timeoutCheckForm)
       }
@@ -98,6 +106,4 @@
   }
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>

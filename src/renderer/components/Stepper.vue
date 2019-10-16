@@ -34,14 +34,13 @@
     >
       <div class="stepper__step-content">
         <step-form
-          @valid="validForm"
+          @change="validForm"
         />
       </div>
 
       <div class="stepper__step-actions">
         <md-button
           class="md-primary md-raised stepper__btn-prev"
-          :disabled="currentStep === STEPS.welcome"
           @click="prevStep"
         >
           Back
@@ -63,14 +62,14 @@
     >
       <div class="stepper__step-content">
         <step-asset-selector
-          :formData="formData"
+          :backupData="formData.backup"
+          @change="selectAsset"
         />
       </div>
 
       <div class="stepper__step-actions">
         <md-button
           class="md-primary md-raised stepper__btn-prev"
-          :disabled="currentStep === STEPS.welcome"
           @click="prevStep"
         >
           Back
@@ -78,11 +77,16 @@
 
         <md-button
           class="md-primary md-raised stepper__btn-next"
-          :disabled="!disableForm"
-          @click="nextStep"
+          @click="createSignature"
+          :disabled="!selectedAsset"
+          v-if="!isCreatedSignature"
         >
           {{ $t('mainPage.buttons.next') }}
         </md-button>
+        <md-spinner
+          v-else
+          md-indeterminate
+        />
       </div>
     </div>
 
@@ -90,7 +94,28 @@
       class="stepper__step"
       v-if="currentStep === STEPS.exportHash"
     >
-      <p>export hash</p>
+      <div class="stepper__step-content">
+        <step-export
+          :signature="signature"
+        />
+      </div>
+
+      <div class="stepper__step-actions">
+        <md-button
+          class="md-primary md-raised stepper__btn-prev"
+          @click="prevStep"
+        >
+          Back
+        </md-button>
+
+        <md-button
+          class="md-primary md-raised stepper__btn-next"
+          v-clipboard:copy="signature"
+          @click="copySignature"
+        >
+          Copy
+        </md-button>
+      </div>
     </div>
   </div>
 </template>
@@ -99,6 +124,9 @@
   import StepWelcome from './steps/StepWelcome.vue'
   import StepForm from './steps/StepForm.vue'
   import StepAssetSelector from './steps/StepAssetSelector.vue'
+  import StepExport from './steps/StepExport.vue'
+  import serviceDash from '../services/dash-service'
+  import { mapActions } from 'vuex'
 
   const STEPS = {
     welcome: 'welcome',
@@ -112,19 +140,38 @@
     components: {
       StepWelcome,
       StepForm,
-      StepAssetSelector
+      StepAssetSelector,
+      StepExport
     },
     data () {
       return {
         STEPS,
         currentStep: 'welcome',
         disableForm: false,
-        formData: null
+        formData: null,
+        selectedAsset: '',
+        isCreatedSignature: false,
+        signature: ''
       }
     },
     methods: {
+      ...mapActions({
+        updateNotification: 'updateNotification'
+      }),
+      copySignature () {
+        this.updateNotification('Copied!')
+      },
+      createSignature () {
+        this.isCreatedSignature = true
+        this.$nextTick(() => {
+          this.signature = serviceDash.signHex(this.formData.backup[this.selectedAsset])
+          this.nextStep()
+        })
+      },
+      selectAsset (asset) {
+        this.selectedAsset = asset
+      },
       validForm (data) {
-        console.log(data.valid)
         this.disableForm = data.valid
         this.formData = data.form
       },
@@ -136,10 +183,11 @@
         } else {
           this.currentStep = b[a + 1]
         }
-//        this.currentStep =
       },
       prevStep () {
         this.disableForm = false
+        this.selectedAsset = ''
+        this.isCreatedSignature = false
         let b = Object.keys(STEPS)
         let a = b.indexOf(this.currentStep)
         if (a === 0) {
@@ -147,13 +195,6 @@
         } else {
           this.currentStep = b[a - 1]
         }
-//        this.currentStep =
-      },
-      changeStep (index) {
-        console.log(index)
-      },
-      completed () {
-        console.log('completed!')
       }
     }
   }
