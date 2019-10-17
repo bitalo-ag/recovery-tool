@@ -40,7 +40,7 @@
   }
 </script>
 
-<style scoped lang="scss">
+<style scoped>
   .lang-selector-wrp {
     width: 100%;
     display: flex;
