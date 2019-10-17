@@ -125,7 +125,9 @@
   import StepForm from './steps/StepForm.vue'
   import StepAssetSelector from './steps/StepAssetSelector.vue'
   import StepExport from './steps/StepExport.vue'
-  import serviceDash from '../services/dash-service'
+  import service_dash from '../services/dash-service'
+  import service_btc from '../services/btc-service'
+  import service_bch from '../services/bch-service'
   import { mapActions } from 'vuex'
 
   const STEPS = {
@@ -164,7 +166,18 @@
       createSignature () {
         this.isCreatedSignature = true
         this.$nextTick(() => {
-          this.signature = serviceDash.signHex(this.formData.backup[this.selectedAsset])
+          switch (this.selectedAsset) {
+            case 'btc':
+              this.signature = service_btc.signHex(this.formData.backup[this.selectedAsset])
+              break
+            case 'bch':
+              this.signature = service_bch.signHex(this.formData.backup[this.selectedAsset])
+              break
+
+            case 'dash':
+              this.signature = service_dash.signHex(this.formData.backup[this.selectedAsset])
+              break
+          }
           this.nextStep()
         })
       },
