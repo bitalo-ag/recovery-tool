@@ -25,18 +25,18 @@ export default {
       const p2wsh = bitcoin.payments.p2wsh({ redeem: p2ms, network: network })
       const p2sh = bitcoin.payments.p2sh({ redeem: p2wsh, network: network })
       if (tx.__inputs[i].signatures){
-        Object.assign(tx.__inputs[i], {signType: "multisig", hasWitness:true, value: bitcore.Unit.fromBTC(utxo.amount).satoshis, signScript: bitcore.Script.buildMultisigOut(utxo['public_keys'].sort(), 2).toBuffer()})
+        Object.assign(tx.__inputs[i], {signType: "multisig", hasWitness:true, value: params.utxo.amount.toSatoshi(), signScript: bitcore.Script.buildMultisigOut(utxo['public_keys'].sort(), 2).toBuffer()})
         var signature = tx.__inputs[i].signatures[0]
         tx.__inputs[i].signatures = [undefined,undefined]
         utxo['public_keys'].sort().forEach((pkey, j)=> {
-          if(pkey === data['public_key']){
-            tx.__inputs[i].signatures[j] = undefined
-          }else{
+          if(pkey =! data['public_key']){
             tx.__inputs[i].signatures[j] = signature
+          }else{
+            tx.__inputs[i].signatures[j] = undefined
           }
         })
       }
-      tx.sign(i, key, p2sh.redeem.output, null, bitcore.Unit.fromBTC(+utxo['amount']).satoshis, p2wsh.redeem.output)
+      tx.sign(i, key, p2sh.redeem.output, null, (+utxo['amount']).toSatoshi(), p2wsh.redeem.output)
     })
     return tx.build().toHex()
   },
