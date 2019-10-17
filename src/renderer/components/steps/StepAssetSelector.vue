@@ -1,38 +1,70 @@
 <template>
-  <div
-    v-if="assets.length"
-    class=""
-  >
-    {{ assets }}
+  <div class="asset-selector">
+    <div
+      class="md-title align-center step-title"
+    >
+      Choose the desired currency.
+    </div>
+
+    <md-input-container
+      class="input-container"
+      v-if="assetsList.length"
+    >
+      <label>Currency</label>
+      <md-select
+        class="asset-select"
+        v-model="asset"
+      >
+        <md-option
+          v-for="(item, index) in assetsList"
+          :value="item"
+          :key="index"
+        >
+          {{ item | toUpper }}
+        </md-option>
+      </md-select>
+    </md-input-container>
   </div>
 </template>
 
 <script>
-  import serviceBtc from '../../services/btc-service'
-  import service from '../../services/bitalo-service'
+  import serviceDash from '../../services/dash-service'
 
   export default {
     name: 'step-asset-selector',
     props: {
-      formData: {
+      backupData: {
         type: Object,
         require: true
       }
     },
-    data () {
-      return {
-        assets: []
+    filters: {
+      toUpper (value) {
+        return value.toUpperCase()
       }
     },
-    mounted () {
-      this.assets = Object.keys(this.formData.backup)
-      let a = service.decryptMasterKey(this.formData.backup.dash.key, this.formData.password, this.formData.backup.dash.salt)
-      console.log(a)
-      this.formData.backup.dash.master_key = a
-      let b = serviceBtc.signHex(this.formData.backup.dash)
-      console.log(b)
+    data () {
+      return {
+        asset: ''
+      }
+    },
+    computed: {
+      assetsList () {
+        if (this.backupData) {
+          return Object.keys(this.backupData)
+        } else {
+          return []
+        }
+      }
+    },
+    watch: {
+      asset (val) {
+        this.$emit('change', val)
+      }
     }
   }
 </script>
 
-<style scoped></style>
+<style scoped>
+
+</style>

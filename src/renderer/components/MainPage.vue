@@ -56,7 +56,6 @@
         this.isDisplayForm = true
       },
       submit () {
-//        01121995Work
         this.currencies = Object.keys(this.form.backupData)
         console.log(this.form.backupData)
         let a = service.decryptMasterKey(this.form.backupData.dash.key, this.form.password, this.form.backupData.dash.salt)
