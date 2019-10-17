@@ -20,7 +20,7 @@ export default {
     var key = bitcoin.ECPair.fromWIF(bitcore.PrivateKey.fromString(data['master_key']).toWIF())
     var tx = bitcoin.TransactionBuilder.fromTransaction(bitcoin.Transaction.fromHex(data['hex']));
     data['utxos'].forEach((utxo, i)=>{
-      const pubkeys = utxo['public_keys'].map((pubkey) => new Buffer(pubkey, 'hex'))
+      const pubkeys = utxo['public_keys'].sort().map((pubkey) => new Buffer(pubkey, 'hex'))
       const p2ms = bitcoin.payments.p2ms({ m: 2, pubkeys, network: network })
       const p2wsh = bitcoin.payments.p2wsh({ redeem: p2ms, network: network })
       const p2sh = bitcoin.payments.p2sh({ redeem: p2wsh, network: network })
