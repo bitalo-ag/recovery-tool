@@ -19,9 +19,6 @@ const actions = {
   },
   updateNotification ({ commit }, message) {
     commit('SET_NOTIFICATION', message)
-    setTimeout(() => {
-      commit('SET_NOTIFICATION', '')
-    }, 4000)
   },
   checkLocalStorage ({ dispatch }, storage) {
     if (storage.hasOwnProperty('lang')) {

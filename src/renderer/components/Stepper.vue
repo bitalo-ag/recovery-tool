@@ -16,14 +16,14 @@
           :disabled="currentStep === STEPS.welcome"
           @click="prevStep"
         >
-          Back
+          {{ $t('stepper.btnBack') }}
         </md-button>
 
         <md-button
           class="md-primary md-raised stepper__btn-next"
           @click="nextStep"
         >
-          {{ $t('mainPage.buttons.next') }}
+          {{ $t('stepper.btnNext') }}
         </md-button>
       </div>
     </div>
@@ -43,7 +43,7 @@
           class="md-primary md-raised stepper__btn-prev"
           @click="prevStep"
         >
-          Back
+          {{ $t('stepper.btnBack') }}
         </md-button>
 
         <md-button
@@ -51,7 +51,7 @@
           :disabled="!disableForm"
           @click="nextStep"
         >
-          {{ $t('mainPage.buttons.next') }}
+          {{ $t('stepper.btnNext') }}
         </md-button>
       </div>
     </div>
@@ -72,21 +72,16 @@
           class="md-primary md-raised stepper__btn-prev"
           @click="prevStep"
         >
-          Back
+          {{ $t('stepper.btnBack') }}
         </md-button>
 
         <md-button
           class="md-primary md-raised stepper__btn-next"
           @click="createSignature"
           :disabled="!selectedAsset"
-          v-if="!isCreatedSignature"
         >
-          {{ $t('mainPage.buttons.next') }}
+          {{ $t('stepper.btnNext') }}
         </md-button>
-        <md-spinner
-          v-else
-          md-indeterminate
-        />
       </div>
     </div>
 
@@ -105,7 +100,7 @@
           class="md-primary md-raised stepper__btn-prev"
           @click="prevStep"
         >
-          Back
+          {{ $t('stepper.btnBack') }}
         </md-button>
 
         <md-button
@@ -113,7 +108,7 @@
           v-clipboard:copy="signature"
           @click="copySignature"
         >
-          Copy
+          {{ $t('stepper.btnCopy') }}
         </md-button>
       </div>
     </div>
@@ -152,7 +147,6 @@
         disableForm: false,
         formData: null,
         selectedAsset: '',
-        isCreatedSignature: false,
         signature: ''
       }
     },
@@ -161,22 +155,28 @@
         updateNotification: 'updateNotification'
       }),
       copySignature () {
-        this.updateNotification('Copied!')
+        this.updateNotification(this.$t('messages.copied'))
       },
       createSignature () {
-        this.isCreatedSignature = true
         this.$nextTick(() => {
-          switch (this.selectedAsset) {
-            case 'btc':
-              this.signature = service_btc.signHex(this.formData.backup[this.selectedAsset])
-              break
-            case 'bch':
-              this.signature = service_bch.signHex(this.formData.backup[this.selectedAsset])
-              break
+          try {
+            switch (this.selectedAsset) {
+              case 'btc':
+                this.signature = service_btc.signHex(this.formData.backup[this.selectedAsset])
+                break
+              case 'bch':
+                this.signature = service_bch.signHex(this.formData.backup[this.selectedAsset])
+                break
 
-            case 'dash':
-              this.signature = service_dash.signHex(this.formData.backup[this.selectedAsset])
-              break
+              case 'dash':
+                this.signature = service_dash.signHex(this.formData.backup[this.selectedAsset])
+                break
+              default:
+                this.updateNotification(this.$t('messages.errorSignature'))
+            }
+          } catch (err) {
+            this.updateNotification(this.$t('messages.warnSomething'))
+            console.error(err)
           }
           this.nextStep()
         })
@@ -200,7 +200,6 @@
       prevStep () {
         this.disableForm = false
         this.selectedAsset = ''
-        this.isCreatedSignature = false
         let b = Object.keys(STEPS)
         let a = b.indexOf(this.currentStep)
         if (a === 0) {

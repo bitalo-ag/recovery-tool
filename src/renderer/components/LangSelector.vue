@@ -13,6 +13,7 @@
 </template>
 
 <script>
+  // TODO: To refactor using config on calculate count localization files
   import { config } from '../config'
   import { mapActions, mapGetters } from 'vuex'
 
@@ -57,15 +58,15 @@
     text-transform: uppercase;
     letter-spacing: .4px;
     transition: all .4s ease;
+  }
 
-    &:hover {
-      cursor: pointer;
-      background-color: #fff;
-      color: #000;
-    }
+  .lang-selector__lang:hover {
+    cursor: pointer;
+    background-color: #fff;
+    color: #000;
+  }
 
-    &:first-of-type {
-      border-right: 1px solid #fff;
-    }
+  .lang-selector__lang:first-of-type {
+    border-right: 1px solid #fff;
   }
 </style>

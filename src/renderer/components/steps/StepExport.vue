@@ -3,13 +3,15 @@
     <div
       class="md-title align-center step-title"
     >
-      Now you can copy the generated signature. Thank you!
+      {{ $t('export.title') }}
     </div>
 
     <md-input-container
       class="input-container"
     >
-      <label>Signature</label>
+      <label>
+        {{ $t('export.signatureLabel') }}
+      </label>
       <md-textarea
         :value="signature"
       />

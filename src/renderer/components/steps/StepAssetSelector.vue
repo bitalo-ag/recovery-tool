@@ -3,14 +3,16 @@
     <div
       class="md-title align-center step-title"
     >
-      Choose the desired currency.
+      {{ $t('assetSelector.title') }}
     </div>
 
     <md-input-container
       class="input-container"
       v-if="assetsList.length"
     >
-      <label>Currency</label>
+      <label>
+        {{ $t('assetSelector.currencyLabel') }}
+      </label>
       <md-select
         class="asset-select"
         v-model="asset"
@@ -65,6 +67,4 @@
   }
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>

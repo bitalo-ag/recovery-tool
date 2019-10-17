@@ -3,6 +3,7 @@
     :md-position="vertical + ' ' + horizontal"
     :ref="reference"
     :md-duration="duration"
+    @close="close"
   >
     <span>
       {{ notification }}
@@ -11,7 +12,7 @@
 </template>
 
 <script>
-  import { mapGetters } from 'vuex'
+  import { mapGetters, mapActions } from 'vuex'
 
   export default {
     name: 'notification',
@@ -24,8 +25,11 @@
       }
     },
     methods: {
+      ...mapActions({
+        updateNotification: 'updateNotification'
+      }),
       close () {
-
+        this.updateNotification('')
       }
     },
     computed: {
@@ -37,12 +41,12 @@
       notification (val) {
         if (val) {
           this.$refs[this.reference].open()
+        } else {
+          this.$refs[this.reference].close()
         }
       }
     }
   }
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>

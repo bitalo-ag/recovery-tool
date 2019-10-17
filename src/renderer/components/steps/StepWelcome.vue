@@ -3,7 +3,7 @@
     <div
       class="md-title align-center"
     >
-      {{ $t('mainPage.title') }}
+      {{ $t('welcome.title') }}
     </div>
   </div>
 </template>
@@ -14,6 +14,4 @@
   }
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>

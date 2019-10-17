@@ -3,33 +3,43 @@
     <div
       class="md-title align-center step-title"
     >
-      Fill in the fields with data from the email.
+      {{ $t('form.title') }}
     </div>
 
     <md-input-container
-      class="input-container"
+      :class="(backupLoadError) ? 'md-input-invalid' : 'input-container'"
     >
-      <label>Backup file</label>
+      <label>
+        {{ $t('form.backupLabel') }}
+      </label>
       <md-file
         @change.native="loadBackupData"
       />
+      <span class="md-error">
+        {{ $t('form.backupErrorMessage') }}
+      </span>
     </md-input-container>
 
     <md-input-container
-      :class="(passwordErrorMessage.length) ? 'md-input-invalid' : 'input-container'"
+      md-has-password
+      :class="(passwordError) ? 'md-input-invalid' : 'input-container'"
     >
       <label>
-        {{ $t('mainPage.form.password') }}
+        {{ $t('form.passwordLabel') }}
       </label>
-      <md-input v-model="form.password" />
-      <span class="md-error">{{ passwordErrorMessage }}</span>
+      <md-input
+        type="password"
+        v-model="form.password"
+      />
+      <span class="md-error">
+        {{ $t('form.passwordErrorMessage') }}
+      </span>
     </md-input-container>
   </div>
 </template>
 
 <script>
   import service from '../../services/bitalo-service'
-  import serviceDash from '../../services/dash-service'
   import { mapActions } from 'vuex'
   const _ = require('lodash')
 
@@ -45,8 +55,9 @@
           backup: null,
           password: '',
         },
-        timeoutCheckForm: 1000,
-        passwordErrorMessage: '',
+        timeoutCheckForm: 1500,
+        passwordError: false,
+        backupLoadError: false
       }
     },
     methods: {
@@ -54,14 +65,23 @@
         updateNotification: 'updateNotification'
       }),
       loadBackupData (e) {
-        let reader = new FileReader()
-        let file = e.target.files[0]
-        reader.readAsText(file, "UTF-8")
-        reader.onload = evt => {
-          this.form.backup = JSON.parse(evt.target.result)
-        }
-        reader.onerror = evt => {
-          console.error(evt)
+        try {
+          let reader = new FileReader()
+          let file = e.target.files[0]
+          reader.readAsText(file, "UTF-8")
+          reader.onload = evt => {
+            if (file.type !== 'application/json') {
+              this.backupLoadError = true
+              return
+            }
+            this.backupLoadError = false
+            this.form.backup = JSON.parse(evt.target.result)
+          }
+          reader.onerror = evt => {
+            console.error(evt)
+          }
+        } catch (err) {
+          this.updateNotification(this.$t('messages.warnSomething'))
         }
       },
       createMasterKey () {
@@ -71,17 +91,17 @@
             let masterKey = service.decryptMasterKey(this.form.backup[el].key, this.form.password, this.form.backup[el].salt)
             this.form.backup[el].master_key = masterKey
             if (!masterKey) {
-              this.passwordErrorMessage = 'Wrong password'
-              throw { message: this.passwordErrorMessage, isDisplay: false }
+              this.passwordError = true
+              throw { message: '', isDisplay: false }
             }
           })
-          this.passwordErrorMessage = ''
+          this.passwordError = false
           this.$emit(EVENTS.change, { valid: true, form: this.form })
         } catch (err) {
           console.error(err)
           this.$emit(EVENTS.change, { valid: false, form: this.form })
           if (!err.hasOwnProperty('isDisplay') && !err.isDisplay) {
-            this.updateNotification('Something went wrong')
+            this.updateNotification(this.$t('messages.warnSomething'))
           }
         }
       }

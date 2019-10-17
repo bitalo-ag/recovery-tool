@@ -16,12 +16,17 @@ body {
 
 .input-container>label,
 .input-container>input,
+.input-container>button>i,
 .input-container>textarea,
 .input-container>div>i,
 .input-container>div>input,
 .input-container>div>div,
 .md-select.md-theme-default:after {
     color: #fff !important;
+}
+
+.md-toggle-password {
+    right: -8px !important;
 }
 
 .input-container:after {
