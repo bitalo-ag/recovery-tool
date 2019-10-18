@@ -53,9 +53,10 @@
   "dependencies": {
     "axios": "^0.16.1",
     "bitcoinjs-lib": "^4.0.2",
+    "bitcoinjs-lib-cash": "git+https://github.com/blag0j/bitcoinjs-lib-cash.git#bcash330",
     "bitcoinjs-lib-dash": "^1.0.0",
     "bitcore-lib": "git+https://github.com/IhorSavva/bitcore-lib.git#feature/segwit",
-    "bitcore-lib-cash": "git+https://github.com/IhorSavva/bitcore-lib-cash.git",
+    "bitcore-lib-cash": "^8.9.0",
     "bitcore-lib-dash": "git+https://github.com/IhorSavva/bitcore-lib-dash.git",
     "crypto-js": "^3.1.9-1",
     "lodash": "^4.17.15",
