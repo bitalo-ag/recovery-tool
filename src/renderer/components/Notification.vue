@@ -34,7 +34,8 @@
     },
     computed: {
       ...mapGetters({
-        notification: 'notification'
+        notification: 'notification',
+        lang: 'lang'
       })
     },
     watch: {
@@ -44,6 +45,9 @@
         } else {
           this.$refs[this.reference].close()
         }
+      },
+      lang () {
+        this.$refs[this.reference].close()
       }
     }
   }

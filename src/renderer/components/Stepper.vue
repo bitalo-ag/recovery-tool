@@ -35,6 +35,7 @@
       <div class="stepper__step-content">
         <step-form
           @change="validForm"
+          :invalidMasterKey="invalidMasterKey"
         />
       </div>
 
@@ -49,7 +50,7 @@
         <md-button
           class="md-primary md-raised stepper__btn-next"
           :disabled="!disableForm"
-          @click="nextStep"
+          @click="submitForm"
         >
           {{ $t('stepper.btnNext') }}
         </md-button>
@@ -105,7 +106,6 @@
 
         <md-button
           class="md-primary md-raised stepper__btn-next"
-          v-clipboard:copy="signature"
           @click="copySignature"
         >
           {{ $t('stepper.btnCopy') }}
@@ -123,6 +123,7 @@
   import service_dash from '../services/dash-service'
   import service_btc from '../services/btc-service'
   import service_bch from '../services/bch-service'
+  import service from '../services/bitalo-service'
   import { mapActions } from 'vuex'
 
   const STEPS = {
@@ -147,14 +148,50 @@
         disableForm: false,
         formData: null,
         selectedAsset: '',
-        signature: ''
+        signature: '',
+        invalidMasterKey: false
       }
     },
     methods: {
       ...mapActions({
         updateNotification: 'updateNotification'
       }),
+      createMasterKey () {
+        try {
+          const assets = Object.keys(this.formData.backup)
+          assets.forEach(el => {
+            let masterKey = service.decryptMasterKey(this.formData.backup[el].key, this.formData.password, this.formData.backup[el].salt)
+            this.formData.backup[el].master_key = masterKey
+            if (!masterKey) {
+              this.invalidMasterKey = true
+              throw { message: 'Invalid master key', isDisplay: false }
+            }
+          })
+          this.invalidMasterKey = false
+          this.nextStep()
+        } catch (err) {
+          console.error(err)
+          this.invalidMasterKey = true
+          if (!err.hasOwnProperty('isDisplay') && !err.isDisplay) {
+            this.updateNotification(this.$t('messages.warnSomething'))
+          }
+        }
+      },
+      submitForm () {
+        this.createMasterKey()
+      },
       copySignature () {
+        let testingCodeToCopy = document.querySelector('#testing-code')
+        testingCodeToCopy.setAttribute('type', 'text')
+        testingCodeToCopy.select()
+
+        try {
+          document.execCommand('copy')
+        } catch (err) {
+          console.error(err)
+        }
+        testingCodeToCopy.setAttribute('type', 'hidden')
+        window.getSelection().removeAllRanges()
         this.updateNotification(this.$t('messages.copied'))
       },
       createSignature () {

@@ -22,7 +22,7 @@
 
     <md-input-container
       md-has-password
-      :class="(passwordError) ? 'md-input-invalid' : 'input-container'"
+      :class="(invalidMasterKey) ? 'md-input-invalid' : 'input-container'"
     >
       <label>
         {{ $t('form.passwordLabel') }}
@@ -49,6 +49,12 @@
 
   export default {
     name: 'step-form',
+    props: {
+      invalidMasterKey: {
+        type: Boolean,
+        default: false
+      }
+    },
     data () {
       return {
         form: {
@@ -115,11 +121,7 @@
       form: {
         deep: true,
         handler: _.debounce(function () {
-          if (this.isValidFields) {
-            this.createMasterKey()
-          } else {
-            this.$emit(EVENTS.change, { valid: false, form: this.form })
-          }
+          this.$emit(EVENTS.change, { valid: this.isValidFields, form: this.form })
         }, this.timeoutCheckForm)
       }
     }
