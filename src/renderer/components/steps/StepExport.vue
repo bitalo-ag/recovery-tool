@@ -13,6 +13,7 @@
         {{ $t('export.signatureLabel') }}
       </label>
       <md-textarea
+        id="testing-code"
         :value="signature"
       />
     </md-input-container>
