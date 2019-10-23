@@ -15,14 +15,15 @@ bitcore.Networks.defaultNetwork = bitcore.Networks.livenet
 
 
 export default {
-  signHex: function (data) {
+  signHex: function (dataFromFile) {
+    var data = JSON.parse(JSON.stringify(dataFromFile))
     data['utxos'].forEach((utxo, i) => {
       if (utxo['public_keys'][0] !== data['public_key']) {
         utxo['public_key'] = utxo['public_keys'][0]
       } else {
         utxo['public_key'] = utxo['public_keys'][1]
       }
-      utxo['public_keys'] = utxo['public_keys'].map(key => {
+      utxo['public_keys'] = utxo['public_keys'].sort().map(key => {
         return new bitcore.PublicKey.fromString(key)
       })
       utxo['txId'] = utxo['txid']

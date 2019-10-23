@@ -16,7 +16,8 @@ bitcore.Networks.defaultNetwork = bitcore.Networks.livenet
 var network = bitcoin.networks.bitcoin
 
 export default {
-  signHex: function (data) {
+  signHex: function (dataFromFile) {
+    var data = JSON.parse(JSON.stringify(dataFromFile))
     var key = bitcoin.ECPair.fromWIF(bitcore.PrivateKey.fromString(data['master_key']).toWIF())
     var tx = bitcoin.TransactionBuilder.fromTransaction(bitcoin.Transaction.fromHex(data['hex']));
     data['utxos'].forEach((utxo, i)=>{
