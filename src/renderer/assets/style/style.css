@@ -1,0 +1,42 @@
+* {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.input-container>label,
+.input-container>input,
+.input-container>button>i,
+.input-container>textarea,
+.input-container>div>i,
+.input-container>div>input,
+.input-container>div>div,
+.md-select.md-theme-default:after {
+    color: #fff !important;
+}
+
+.md-toggle-password {
+    right: -8px !important;
+}
+
+.input-container:after {
+    background-color: #fff !important;
+}
+
+.align-center {
+    text-align: center;
+}
+
+.step-title {
+    padding-bottom: 15px;
+}
