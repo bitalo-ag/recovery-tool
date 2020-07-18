@@ -58,7 +58,7 @@
     "bitcore-lib-cash": "git+https://github.com/IhorSavva/bitcore-lib-cash.git#recovery_tool",
     "bitcore-lib-dash": "git+https://github.com/IhorSavva/bitcore-lib-dash.git",
     "crypto-js": "^3.1.9-1",
-    "lodash": "^4.17.15",
+    "lodash": "^4.17.19",
     "os": "^0.1.1",
     "request-promise": "^4.2.2",
     "vue": "^2.3.3",
